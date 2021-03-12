@@ -1,4 +1,5 @@
 import { Component, ElementRef, NgZone, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { IgxRadioComponent, IgxRadioGroupDirective } from 'igniteui-angular';
 import { Observable, Subject } from 'rxjs';
 import { Answer, DbService, Question } from '../db.service';
 
@@ -11,28 +12,65 @@ import { Answer, DbService, Question } from '../db.service';
 export class MinigameBiotriviaComponent implements OnInit {
     @ViewChildren('startDialog') startingElementRef;
     @ViewChildren('ongoingDialog') ongoingElementRef;
+    @ViewChildren('endDialog') endingElementRef;
 
-    guessedQuestions = 0;
-    stage: 'starting' | 'starting-ongoing' | 'ongoing' | 'ended' = 'starting';
+    stage: 'starting' | 'starting-ongoing' | 'ongoing' | 'ongoing-ended' | 'ended' = 'starting';
 
     questions: Question[];
 
+    displayError = false;
+
+    guessedQuestions = 0;
     currQuestionN = 0;
     currQuestion: Question;
     currAnswers: string[];
 
-    selected: string;
+    previousAnswers: Array<{ question: Question, answer: string }> = [];
+
+    selectedAnswer = '';
+    isAnswered(): boolean {
+        return this.selectedAnswer !== '';
+    }
 
     constructor(
-        private zone: NgZone,
         private db: DbService
     ) { }
 
     ngOnInit(): void {
     }
 
-    test() {
-        console.log('sdfgui s');
+    submitAnswer(): void {
+        if (!this.isAnswered()) {
+            this.displayError = true;
+            return;
+        }
+        this.ongoingElementRef.first.nativeElement.style.position = 'absolute';
+
+        if (this.selectedAnswer === this.currQuestion.answer.correctChoise) this.guessedQuestions++;
+
+        this.previousAnswers.push({
+            answer: ''
+        })
+
+        if (this.currQuestionN >= this.questions.length) {
+            this.stage = 'ongoing-ended';
+
+            setTimeout(() => {
+                this.endingElementRef.first.nativeElement.style.opacity = 0;
+                this.animateElements(
+                    this.ongoingElementRef.first.nativeElement,
+                    this.endingElementRef.first.nativeElement
+                // tslint:disable-next-line: deprecation
+                ).subscribe(() => {
+                    this.stage = 'ended';
+                });
+            }, 10);
+            return;
+        }
+
+        this.displayError = false;
+        this.selectedAnswer = '';
+        this.loadNextQuestion();
     }
 
     animateElements(el1: HTMLElement, el2: HTMLElement): Observable<void> {
@@ -87,13 +125,11 @@ export class MinigameBiotriviaComponent implements OnInit {
         startingEl.style.position = 'absolute';
 
         this.stage = 'starting-ongoing';
-        this.questions = this.db.getRandomQuestions(5, this.db.getRandomCategory());
+        this.questions = this.db.getRandomQuestions(1, this.db.getRandomCategory());
         this.loadNextQuestion();
 
         setTimeout(() => {
             const ongoingEl = this.ongoingElementRef.first.nativeElement as HTMLElement;
-
-            console.log(this.questions);
 
             // tslint:disable-next-line: deprecation
             this.animateElements(startingEl, ongoingEl).subscribe(() => {
