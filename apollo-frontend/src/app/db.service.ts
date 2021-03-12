@@ -31,6 +31,7 @@ export class DbService {
             el: {
                 name: 'Рециклиране',
                 url: '/minigames/conveyor-belt',
+                comingSoon: true,
             }
         },
         {
