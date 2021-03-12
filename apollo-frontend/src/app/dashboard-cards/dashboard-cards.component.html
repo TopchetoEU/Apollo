@@ -4,5 +4,6 @@
         <div class="contnets" *ngFor="let card of getCards()" class="card"> 
             <app-card [card]="card"></app-card>
         </div>
+        <div style="margin: auto;" *ngIf="getCards().length === 0">Вие нямате карти</div>
     </div>
 </div>

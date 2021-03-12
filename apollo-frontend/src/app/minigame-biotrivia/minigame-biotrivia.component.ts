@@ -1,7 +1,7 @@
 import { Component, ElementRef, NgZone, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { IgxRadioComponent, IgxRadioGroupDirective } from 'igniteui-angular';
 import { Observable, Subject } from 'rxjs';
-import { Answer, DbService, Question } from '../db.service';
+import { Answer, Card, DbService, Question, Saved } from '../db.service';
 import { UserdataService } from '../userdata.service';
 
 
@@ -26,6 +26,8 @@ export class MinigameBiotriviaComponent implements OnInit {
     currQuestion: Question;
     currAnswers: string[];
 
+    wonCard: Card = null;
+
     answers: Array<{ question: Question, answer: string }> = [];
 
     selectedAnswer = '';
@@ -39,6 +41,36 @@ export class MinigameBiotriviaComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+    }
+
+    endGame(): void {
+        this.stage = 'ongoing-ended';
+
+        const successRate = (this.guessedQuestions) / this.questions.length;
+
+        if (successRate > 0.5) {
+            const owned = this.userdata.getOwnedCardIds();
+
+            let newCard = null;
+
+            do {
+                newCard = this.db.getRandomCardId(successRate - .5);
+            } while (owned.includes(newCard));
+
+            this.userdata.addCard(newCard);
+            this.wonCard = this.db.getCard(newCard);
+        }
+
+        setTimeout(() => {
+            this.endingElementRef.first.nativeElement.style.opacity = 0;
+            this.animateElements(
+                this.ongoingElementRef.first.nativeElement,
+                this.endingElementRef.first.nativeElement
+            // tslint:disable-next-line: deprecation
+            ).subscribe(() => {
+                this.stage = 'ended';
+            });
+        }, 10);
     }
 
     submitAnswer(): void {
@@ -56,18 +88,7 @@ export class MinigameBiotriviaComponent implements OnInit {
         });
 
         if (this.currQuestionN >= this.questions.length) {
-            this.stage = 'ongoing-ended';
-
-            setTimeout(() => {
-                this.endingElementRef.first.nativeElement.style.opacity = 0;
-                this.animateElements(
-                    this.ongoingElementRef.first.nativeElement,
-                    this.endingElementRef.first.nativeElement
-                // tslint:disable-next-line: deprecation
-                ).subscribe(() => {
-                    this.stage = 'ended';
-                });
-            }, 10);
+            this.endGame();
             return;
         }
 
@@ -128,7 +149,7 @@ export class MinigameBiotriviaComponent implements OnInit {
         startingEl.style.position = 'absolute';
 
         this.stage = 'starting-ongoing';
-        this.questions = this.db.getRandomQuestions(5, this.db.getRandomCategory());
+        this.questions = this.db.getRandomQuestions(1);
         this.loadNextQuestion();
 
         setTimeout(() => {
@@ -176,7 +197,7 @@ export class MinigameBiotriviaComponent implements OnInit {
 
         this.stage = 'ongoing-ended';
 
-        this.questions = this.db.getRandomQuestions(5, this.db.getRandomCategory());
+        this.questions = this.db.getRandomQuestions(1);
 
         this.displayError = false;
 
@@ -185,6 +206,8 @@ export class MinigameBiotriviaComponent implements OnInit {
         this.answers = [];
 
         this.selectedAnswer = '';
+
+        this.wonCard = null;
 
         this.loadNextQuestion();
 

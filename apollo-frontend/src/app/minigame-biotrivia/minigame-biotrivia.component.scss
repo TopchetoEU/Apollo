@@ -41,15 +41,20 @@
             margin: .25em;
         }
     }
+    .question {
+        padding: 0;
+        .container2 {
+            padding: 2em;
+            padding-top: 0;
+        }
+    }
 
     .progress {
-        position: absolute;
-        top: 0;
-        left: 0;
+        width: 100%;
     }
 
     .wrongAnswers {
-        max-height: 50vh;
+        max-height: 25vh;
         overflow-y: auto;
     }
 

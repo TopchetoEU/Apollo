@@ -10,14 +10,13 @@ import { UserdataService } from '../userdata.service';
 export class DashboardCardsComponent implements OnInit {
 
   constructor(
-    private db: DbService,
+    private userdata: UserdataService,
   ) { }
 
   ngOnInit(): void {
   }
 
   getCards(): Card[] {
-    return this.db.getAllCards().map(v => v.el);
+    return this.userdata.getOwnedCards();
   }
-
 }

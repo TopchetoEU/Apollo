@@ -49,7 +49,7 @@ export class UserdataService {
         const cardsRaw = localStorage.cards;
         if (cardsRaw) return JSON.parse(cardsRaw);
         else {
-            localStorage.cards = [];
+            localStorage.cards = JSON.stringify([]);
             return [];
         }
     }
@@ -69,7 +69,7 @@ export class UserdataService {
         if (saved.includes(id)) throw new Error("Can't add a card that already exists!");
         saved = [...saved, id];
 
-        localStorage.cards = saved;
+        localStorage.cards = JSON.stringify(saved);
     }
 
     constructor(
