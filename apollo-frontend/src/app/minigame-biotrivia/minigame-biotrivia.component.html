@@ -1,1 +1,15 @@
-<p>minigame-biotrivia works!</p>
+<div class="container">
+    <div class="start-dialog dialog" *ngIf="stage === 'starting' || stage === 'starting-ongoing'" #startDialog>
+        <h4>Пробвай познанията си за екология</h4>
+        <p>
+            В тази викторина ще има 5 въпроса, които ще тестват вашите познания по екология.
+            Накрая, в зависимост от познатите отговори, ще получите по-рядка карта или
+            по-обикновена карта</p>
+        <button igxButton igxRipple (click)="startGame()">Продължи към играта</button>
+        <div class="separator"></div>
+        <button igxButton igxRipple routerLink="" >Върни се в началния екран</button>
+    </div>
+    <div class="question dialog" *ngIf="stage === 'ongoing' || stage === 'starting-ongoing'" #ongoingDialog>
+        <h4></h4>
+    </div>
+</div>

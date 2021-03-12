@@ -6,6 +6,10 @@ html {
     width: 100%;
     height: 100%;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+}
+
+html {
     background-image: url('/assets/images/Forest BG.png');
     background-size: cover
 }
@@ -29,4 +33,12 @@ $my-color-palette: igx-palette($primary: $company-color,
 
 .contents {
     display: contents;
+}
+* {
+    box-sizing: border-box;
+}
+.dialog {
+    background-color: #f8f8f855;
+    backdrop-filter: blur(10px);
+    box-shadow: #0004 3px 3px 5px;
 }

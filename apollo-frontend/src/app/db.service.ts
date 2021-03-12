@@ -16,11 +16,22 @@ export interface Card {
     name: string;
     types: Array<"endangered" | "normal">;
 }
+export interface MultipleChoiseAnswer {
+    type: 'multiple-choise';
+    choises: string[];
+    correctChoise: string;
+}
+export interface Question {
+    category: string;
+    question: string;
+    photoUrlsAbove?: string[];
+    answer: MultipleChoiseAnswer;
+}
+
 export interface Saved<T> {
     id: string;
     el: T;
 }
-
 @Injectable({
     providedIn: 'root'
 })
@@ -298,11 +309,111 @@ export class DbService {
             },
         },
     ];
+    private mock_questions: Saved<Question>[] = [
+        {
+            id: '0',
+            el: {
+                category: 'animals',
+                photoUrlsAbove: [ '/assets/images/questions/slon.jpg' ],
+                question: 'Защо бройката на слоновете в Африка намалява?',
+                answer: {
+                    type: 'multiple-choise',
+                    choises: [
+                        'Убиван е от други животни',
+                        'Липса на храна',
+                        'Убивани са от бракониери',
+                        'Замърсяване на въздуха'
+                    ],
+                    correctChoise: 'Убивани са от бракониери',
+                }
+            }
+        },
+        {
+            id: '1',
+            el: {
+                category: 'animals',
+                photoUrlsAbove: [ '/assets/images/questions/carski orel.jpg' ],
+                question: 'Каква е главната причина за намаляването на бройките Царски орли?',
+                answer: {
+                    type: 'multiple-choise',
+                    choises: [
+                        'Бракониери',
+                        'Замърсяване',
+                        'Отсичане на горите',
+                        'Електрически стълбове'
+                    ],
+                    correctChoise: 'Електрически стълбове',
+                }
+            }
+        },
+        {
+            id: '2',
+            el: {
+                category: 'animals',
+                photoUrlsAbove: [ '/assets/images/questions/carski orel.jpg' ],
+                question: 'Каква е главната причина за намаляването на бройките Царски орли?',
+                answer: {
+                    type: 'multiple-choise',
+                    choises: [
+                        'Бракониери',
+                        'Замърсяване',
+                        'Отсичане на горите',
+                        'Електрически стълбове'
+                    ],
+                    correctChoise: 'Електрически стълбове',
+                }
+            }
+        },
+        {
+            id: '3',
+            el: {
+                category: 'animals',
+                photoUrlsAbove: [ '/assets/images/questions/zlatna zhaba.png' ],
+                question: 'Каква е причината за изчезването на Златната жаба?',
+                answer: {
+                    type: 'multiple-choise',
+                    choises: [
+                        'Глобално затопляне',
+                        'Замърсяване на реките',
+                        'Отсичане на горите',
+                        'Недостиг на храна'
+                    ],
+                    correctChoise: 'Глобално затопляне',
+                }
+            }
+        },
+        {
+            id: '4',
+            el: {
+                category: 'animals',
+                photoUrlsAbove: [ '/assets/images/questions/shtigga.png' ],
+                question: 'Каква е причината за намаляването на бройките на Черният щъркел?',
+                answer: {
+                    type: 'multiple-choise',
+                    choises: [
+                        'Замърсяването на блатата и езерата',
+                        'Недостиг на храна',
+                        'Глобално затопляне',
+                        'Естествени врагове',
+                    ],
+                    correctChoise: 'Замърсяването на блатата и езерата',
+                }
+            }
+        },
+    ];
 
-    private getRandomEl<T>(array: T[]): T {
-        const index = Math.floor(Math.random() * array.length);
-
-        return array[index];
+    private getRandomEls<T>(array: T[], n: number): T[] {
+        const result: T[] = new Array(n);
+        let len = array.length;
+        const taken = new Array(len);
+        if (n > len)
+            throw new RangeError("getRandom: more elements taken than available");
+        while (n--) {
+            const x = Math.floor(Math.random() * len);
+            result[n] = array[x in taken ? taken[x] : x];
+            taken[x] = --len in taken ? taken[len] : len;
+        }
+        return result;
     }
 
     getAllMinigames(): Saved<Minigame>[] {
@@ -323,6 +434,12 @@ export class DbService {
 
         if (index < 0) return null;
         else return this.mock_card_types[index].el;
+    }
+
+    getRandomQuestions(n: number, category: string): Question[] {
+        return this.getRandomEls(this.mock_questions
+            .filter(v => v.el.category === category)
+            .map(v => v.el), n);
     }
 
     constructor() { }
