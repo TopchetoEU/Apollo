@@ -3,30 +3,14 @@
         display: flex;
         flex-direction: column;
         box-sizing: border-box;
-        flex: 1 0 auto;
+        flex: 1 1 auto;
+        align-items: flex-start;
         &>* {
             flex: 1 0 auto;
         }
         h6 {
             margin: 0;
             text-align: center;
-            &.small {
-                margin-top: .5em;
-            }
-        }
-        p {
-            margin: 0;
-            &.small::before {
-                content: '';
-                width: 2em;
-                height: 3px;
-                display: inline-block;
-            }
-        }
-        .small {
-            font-size: .75em;
-            line-height: 1em;
-            text-align: start;
         }
         .img-fitter{
             margin-top: .5em;
@@ -35,6 +19,8 @@
             flex: 1 0 auto;
             background: center no-repeat;
             background-size: cover;
+            box-shadow: transparent 3px 3px 5px;
+            position: relative;
         }
 
         margin-top: .5em;
@@ -60,6 +46,32 @@
             }
         }
     }
+    .info {
+        overflow: auto;
+        flex: 1 1 auto;
+        p {
+            margin: 0;
+            &.small::before {
+                content: '';
+                width: 2em;
+                height: 3px;
+                display: inline-block;
+            }
+        }
+        h6 {
+            margin: 0;
+            text-align: center;
+            &.small {
+                margin-bottom: .25em;
+                margin-top: .5em;
+            }
+        }
+        .small {
+            font-size: .75em;
+            line-height: 1.25em;
+            text-align: start;
+        }
+    }
 
     display: flex;
     flex-direction: column;
@@ -72,7 +84,8 @@
 
     box-shadow: #0004 3px 3px 5px;
 
-    background-color: #f8f8f8;
+    background-color: #f8f8f855;
+    backdrop-filter: blur(10px);
 
     button {
         margin: 0 auto;

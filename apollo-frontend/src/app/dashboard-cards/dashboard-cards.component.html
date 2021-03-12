@@ -1,5 +1,8 @@
 <h4 style="margin-bottom: 1em; text-align: center;">Вашите карти:</h4>
 <div class="cards">
-    <app-card [card]="{ name: 'test', imageUrl: 'no-image', types: [ 'normal' ], info: [] }"></app-card>
-    <app-card></app-card>
+    <div class="cards-inner">
+        <div class="contnets" *ngFor="let card of getCards()" class="card"> 
+            <app-card [card]="card"></app-card>
+        </div>
+    </div>
 </div>

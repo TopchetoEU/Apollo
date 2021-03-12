@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Card, DbService } from '../db.service';
+import { UserdataService } from '../userdata.service';
 
 @Component({
   selector: 'app-dashboard-cards',
@@ -7,9 +9,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardCardsComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private db: DbService,
+  ) { }
 
   ngOnInit(): void {
+  }
+
+  getCards(): Card[] {
+    return this.db.getAllCards().map(v => v.el);
   }
 
 }

@@ -1,4 +1,18 @@
 .cards {
+    width: 100%;
+    height: 232px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.cards-inner {
     display: flex;
+    flex-wrap: wrap;
+    width: 100%;
     gap: 2em;
+    padding: 1em 0;
+    scroll-snap-type: y mandatory;
+    box-sizing: border-box;
+}
+.card {
+    scroll-snap-align: start;
 }

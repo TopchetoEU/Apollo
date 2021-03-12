@@ -1,5 +1,7 @@
-<h4 style="margin-bottom: 1em; text-align: center;">Миниигри:</h4>
+<h4 style="text-align: center;">Миниигри:</h4>
 <div class="cards">
-    <app-minigame-card *ngFor="let minigame of getMinigames()"
-        [minigame]="minigame.el" [minigameUserdata]="getMinigameUserdata(minigame.id)"></app-minigame-card>
+    <div class="cards-inner">
+        <app-minigame-card *ngFor="let minigame of getMinigames()" class="card"
+            [minigame]="minigame.el" [minigameUserdata]="getMinigameUserdata(minigame.id)"></app-minigame-card>
+    </div>
 </div>

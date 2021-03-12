@@ -4,17 +4,17 @@
             <div [class]="[type, 'icon']" *ngIf="type !== 'normal'"></div>
         </div>
     </div>
-    <div class="main">
-        <div class="contents" #frontSide *ngIf="!flipped">
+    <div class="main" *ngIf="!flipped">
+        <div class="contents" #frontSide>
             <h6>{{card.name}}</h6>
             <div class="img-fitter" [style.background-image]="'url(\'' + card.imageUrl + '\')'">
             </div>
         </div>
-        <div class="contents" #backSide *ngIf="flipped">
-            <div class="contents" *ngFor="let paragraph of card.info">
-                <h6 class="small">{{paragraph.heading}}</h6>
-                <p class="small">{{paragraph.content}}</p>
-            </div>
+    </div>
+    <div class="info" #backSide *ngIf="flipped">
+        <div class="contents" *ngFor="let paragraph of card.info">
+            <h6 class="small">{{paragraph.heading}}</h6>
+            <p class="small">{{paragraph.content}}</p>
         </div>
     </div>
     <button igxButton igxRipple (click)="flip()">Обърни</button>

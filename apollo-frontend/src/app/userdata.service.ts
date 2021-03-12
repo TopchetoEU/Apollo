@@ -54,7 +54,9 @@ export class UserdataService {
         }
     }
     getOwnedCards(): Card[] {
-        return this.getOwnedCardIds().map(v => this.db.getCard(v));
+        return this.getOwnedCardIds().map(v => {
+            return this.db.getCard(v);
+        });
     }
 
     saveMinigameUserdata(id: string, userdata: MinigameUserdata): void {
