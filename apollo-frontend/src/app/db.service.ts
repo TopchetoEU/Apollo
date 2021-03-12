@@ -28,15 +28,8 @@ export class DbService {
         {
             id: '0',
             el: {
-                name: 'test',
-                url: 'none',
-            }
-        },
-        {
-            id: '1',
-            el: {
-                name: 'test2',
-                url: 'none',
+                name: 'Convayer Recycling',
+                url: '/minigames/conveyor-belt',
             }
         }
     ];

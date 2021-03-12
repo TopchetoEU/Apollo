@@ -41,9 +41,8 @@ export class MinigameCardComponent implements OnInit {
         }
     }
 
-    play() {
+    play(): void {
         this.router.navigate([this.minigame.url], {
-            replaceUrl: true,
         });
     }
 }

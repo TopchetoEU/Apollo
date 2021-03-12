@@ -15,6 +15,7 @@ import { DashboardCardsComponent } from './dashboard-cards/dashboard-cards.compo
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DashboardMinigamesComponent } from './dashboard-minigames/dashboard-minigames.component';
 import { MinigameCardComponent } from './minigame-card/minigame-card.component';
+import { MinigameConveyorRecyclingComponent } from './minigame-conveyor-recycling/minigame-conveyor-recycling.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { MinigameCardComponent } from './minigame-card/minigame-card.component';
     DashboardComponent,
     DashboardMinigamesComponent,
     MinigameCardComponent,
+    MinigameConveyorRecyclingComponent,
   ],
   imports: [
     BrowserModule,
