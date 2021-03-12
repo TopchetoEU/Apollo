@@ -2,6 +2,7 @@ import { Component, ElementRef, NgZone, OnInit, ViewChild, ViewChildren } from '
 import { IgxRadioComponent, IgxRadioGroupDirective } from 'igniteui-angular';
 import { Observable, Subject } from 'rxjs';
 import { Answer, DbService, Question } from '../db.service';
+import { UserdataService } from '../userdata.service';
 
 
 @Component({
@@ -33,7 +34,8 @@ export class MinigameBiotriviaComponent implements OnInit {
     }
 
     constructor(
-        private db: DbService
+        private db: DbService,
+        private userdata: UserdataService,
     ) { }
 
     ngOnInit(): void {
@@ -126,7 +128,7 @@ export class MinigameBiotriviaComponent implements OnInit {
         startingEl.style.position = 'absolute';
 
         this.stage = 'starting-ongoing';
-        this.questions = this.db.getRandomQuestions(1, this.db.getRandomCategory());
+        this.questions = this.db.getRandomQuestions(5, this.db.getRandomCategory());
         this.loadNextQuestion();
 
         setTimeout(() => {
@@ -160,7 +162,39 @@ export class MinigameBiotriviaComponent implements OnInit {
         return array;
     }
 
-    getIncorrectAnswers(): { question: Question, answer: string }[] {
-        return this.answers.filter(v => v.answer === v.question.answer.correctChoise);
+    getIncorrectAnswers(): { question: Question, answer: string, index: number }[] {
+        return this.answers.map((v, i) => {
+            return { ...v, index: i + 1 };
+        }).filter((v) => v.answer !== v.question.answer.correctChoise);
+    }
+
+    restartGame(): void {
+        if (this.stage !== 'ended') return;
+
+        const endingEl = this.endingElementRef.first.nativeElement as HTMLElement;
+        endingEl.style.position = 'absolute';
+
+        this.stage = 'ongoing-ended';
+
+        this.questions = this.db.getRandomQuestions(5, this.db.getRandomCategory());
+
+        this.displayError = false;
+
+        this.guessedQuestions = 0;
+        this.currQuestionN = 0;
+        this.answers = [];
+
+        this.selectedAnswer = '';
+
+        this.loadNextQuestion();
+
+        setTimeout(() => {
+            const ongoingEl = this.ongoingElementRef.first.nativeElement as HTMLElement;
+
+            // tslint:disable-next-line: deprecation
+            this.animateElements(endingEl, ongoingEl).subscribe(() => {
+                this.stage = 'ongoing';
+            });
+        }, 20);
     }
 }

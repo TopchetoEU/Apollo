@@ -27,13 +27,16 @@
         Верни отговори:
         <igx-linear-bar [max]="questions.length" [value]="guessedQuestions"></igx-linear-bar>
         <div *ngIf="guessedQuestions < questions.length">
-            <h6>Грешни отговори</h6>
-            <div *ngFor="let answer of getIncorrectAnswers()">
-                <b>{{answer.question.question}}</b><br>
-                Вашият отговор: {{answer.answer}}
-                Правилен отговор: {{answer.question.answer.correctChoise}}
+            <h6>Грешни отговори:</h6>
+            <div class="wrongAnswers">
+                <div *ngFor="let answer of getIncorrectAnswers()">
+                    <b>{{answer.index}}. {{answer.question.question}}</b><br>
+                    <div><div class="identation"></div> Вашият отговор: {{answer.answer}}</div>
+                    <div><div class="identation"></div> Правилен отговор: {{answer.question.answer.correctChoise}}</div>
+                </div>
             </div>
         </div>
         <button igxButton igxRipple routerLink="">Върни се в началния екран</button>
+        <button igxButton igxRipple (click)="restartGame()">Играй отново</button>
     </div>
 </div>

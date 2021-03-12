@@ -47,4 +47,15 @@
         top: 0;
         left: 0;
     }
+
+    .wrongAnswers {
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+
+    .identation {
+        width: 2em;
+        height: 1em;
+        display: inline-block;
+    }
 }

@@ -23,8 +23,8 @@ html {
 
 @import "~igniteui-angular/lib/core/styles/themes/index";
 
-$company-color: rgb(139, 39, 39); // Some green shade I like
-$secondary-color: rgb(139, 39, 39); // Watermelon pink
+$company-color: rgb(17, 90, 48); // Some green shade I like
+$secondary-color: rgb(156, 28, 28); // Watermelon pink
 
 $my-color-palette: igx-palette($primary: $company-color,
     $secondary: $secondary-color);
@@ -41,4 +41,5 @@ $my-color-palette: igx-palette($primary: $company-color,
     background-color: #f8f8f855;
     backdrop-filter: blur(10px);
     box-shadow: #0004 3px 3px 5px;
+
 }
