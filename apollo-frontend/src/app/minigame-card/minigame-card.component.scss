@@ -1,0 +1,61 @@
+.container {
+    .main {
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        flex: 1 0 auto;
+        &>* {
+            flex: 1 0 auto;
+        }
+        h6 {
+            margin: 0;
+            margin-bottom: .5em;
+            text-align: center;
+        }
+        p {
+            margin: 0;
+            line-height: 1.5em;
+        }
+        margin-top: .5em;
+        margin-bottom: 1em;
+    }
+    .tags {
+        display: flex;
+        justify-content: end;
+        gap: 3px;
+        height: 18px;
+        flex: 0 1 18px;
+        .icon {
+            width: 18px;
+            height: 18px;
+            padding: 2px;
+    
+            border-radius: 5px;
+            background-repeat: no-repeat;
+            background-origin: content-box;
+            &.endangered {
+                background-image: url('/assets/icons/risk-skull.svg');
+                background-color: red;
+            }
+        }
+    }
+
+    display: flex;
+    flex-direction: column;
+
+    width: 200px;
+    height: 200px;
+
+    border-radius: 1em;
+    padding: 1em;
+
+    box-shadow: #0004 3px 3px 5px;
+
+    background-color: #f8f8f8;
+
+    button {
+        margin: 0 auto;
+        display: block;
+        height: min-content;
+    }
+}

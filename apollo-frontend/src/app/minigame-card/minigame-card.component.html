@@ -1,0 +1,14 @@
+<div class="container" #container>
+    <div class="main">
+        <div class="contents" #frontSide *ngIf="!flipped">
+            <h6>{{minigame.name}}</h6>
+        </div>
+        <p *ngIf="minigameUserdata.played">
+            Вече сте играли тази игра и {{hasMedal() ? 'имате' : 'нямате'}} {{getMedalType()}} медал
+        </p>
+        <p *ngIf="!minigameUserdata.played">
+            Все още не сте играли тази игра
+        </p>
+    </div>
+    <button igxButton igxRipple (click)="play()">Играй {{minigameUserdata.played ? 'отново' : ''}}</button>
+</div>
