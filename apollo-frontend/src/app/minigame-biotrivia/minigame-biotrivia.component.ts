@@ -25,7 +25,7 @@ export class MinigameBiotriviaComponent implements OnInit {
     currQuestion: Question;
     currAnswers: string[];
 
-    previousAnswers: Array<{ question: Question, answer: string }> = [];
+    answers: Array<{ question: Question, answer: string }> = [];
 
     selectedAnswer = '';
     isAnswered(): boolean {
@@ -48,9 +48,10 @@ export class MinigameBiotriviaComponent implements OnInit {
 
         if (this.selectedAnswer === this.currQuestion.answer.correctChoise) this.guessedQuestions++;
 
-        this.previousAnswers.push({
-            answer: ''
-        })
+        this.answers.push({
+            answer: this.selectedAnswer,
+            question: this.currQuestion,
+        });
 
         if (this.currQuestionN >= this.questions.length) {
             this.stage = 'ongoing-ended';
@@ -157,5 +158,9 @@ export class MinigameBiotriviaComponent implements OnInit {
         }
 
         return array;
+    }
+
+    getIncorrectAnswers(): { question: Question, answer: string }[] {
+        return this.answers.filter(v => v.answer === v.question.answer.correctChoise);
     }
 }

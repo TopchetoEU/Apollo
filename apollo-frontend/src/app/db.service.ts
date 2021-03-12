@@ -131,7 +131,7 @@ export class DbService {
                 imageUrl: '/assets/images/cards/sinkit2.jpg',
                 info: [
                     {
-                        content: 'Езикът на кита тежи около 4,7 тона. (почти колкото митко и майка му)',
+                        content: 'Езикът на кита тежи около 4,7 тона',
                         heading: 'Интересно'
                     }
                 ]

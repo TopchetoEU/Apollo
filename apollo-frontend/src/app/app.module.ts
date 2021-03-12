@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import {
   IgxButtonModule,
   IgxIconModule,
+  IgxProgressBarModule,
   IgxRadioModule,
   IgxRippleModule,
 } from 'igniteui-angular';
@@ -18,6 +19,7 @@ import { DashboardMinigamesComponent } from './dashboard-minigames/dashboard-min
 import { MinigameCardComponent } from './minigame-card/minigame-card.component';
 import { MinigameConveyorRecyclingComponent } from './minigame-conveyor-recycling/minigame-conveyor-recycling.component';
 import { MinigameBiotriviaComponent } from './minigame-biotrivia/minigame-biotrivia.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,7 @@ import { MinigameBiotriviaComponent } from './minigame-biotrivia/minigame-biotri
     IgxRippleModule,
     IgxIconModule,
     IgxRadioModule,
+    IgxProgressBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
