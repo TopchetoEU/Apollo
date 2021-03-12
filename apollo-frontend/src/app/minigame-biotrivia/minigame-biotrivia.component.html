@@ -9,7 +9,13 @@
         <div class="separator"></div>
         <button igxButton igxRipple routerLink="" >Върни се в началния екран</button>
     </div>
-    <div class="question dialog" *ngIf="stage === 'ongoing' || stage === 'starting-ongoing'" #ongoingDialog>
-        <h4></h4>
+    <div class="question dialog" *ngIf="stage === 'ongoing' || stage === 'starting-ongoing'" #ongoingDialog style="opacity: 0;">
+        <h6>{{currQuestion.question}}</h6>
+
+        <igx-radio-group #choise>
+            <igx-radio [(ngModel)]="selected" *ngFor="let choise of currAnswers" name="choise">{{choise}}</igx-radio>
+        </igx-radio-group>
+
+        <button igxButton igxRipple ></button>
     </div>
 </div>

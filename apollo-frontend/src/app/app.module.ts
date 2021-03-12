@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import {
   IgxButtonModule,
   IgxIconModule,
+  IgxRadioModule,
   IgxRippleModule,
 } from 'igniteui-angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -33,10 +34,12 @@ import { MinigameBiotriviaComponent } from './minigame-biotrivia/minigame-biotri
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    BrowserModule,
 
     IgxButtonModule,
     IgxRippleModule,
     IgxIconModule,
+    IgxRadioModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

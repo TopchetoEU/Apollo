@@ -11,6 +11,7 @@
         max-width: 100%;
     }
     .dialog {
+        width: 600px;
         padding: 2em;
         box-sizing: border-box;
         border-radius: .5em;
@@ -21,7 +22,11 @@
         h4 {
             text-align: center;
             margin: 0 2em;
-            margin-top: 0;
+        }
+        h6 {
+            text-align: center;
+            margin: 0 2em;
+            margin-bottom: .5em;
         }
         .separator {
             height: .5em;
@@ -29,6 +34,10 @@
         }
         p {
             text-align: center;
+        }
+        igx-radio {
+            display: block;
+            margin: .25em;
         }
     }
 }

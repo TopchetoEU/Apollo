@@ -16,8 +16,7 @@ export interface Card {
     name: string;
     types: Array<"endangered" | "normal">;
 }
-export interface MultipleChoiseAnswer {
-    type: 'multiple-choise';
+export interface Answer {
     choises: string[];
     correctChoise: string;
 }
@@ -25,7 +24,7 @@ export interface Question {
     category: string;
     question: string;
     photoUrlsAbove?: string[];
-    answer: MultipleChoiseAnswer;
+    answer: Answer;
 }
 
 export interface Saved<T> {
@@ -317,7 +316,6 @@ export class DbService {
                 photoUrlsAbove: [ '/assets/images/questions/slon.jpg' ],
                 question: 'Защо бройката на слоновете в Африка намалява?',
                 answer: {
-                    type: 'multiple-choise',
                     choises: [
                         'Убиван е от други животни',
                         'Липса на храна',
@@ -335,7 +333,6 @@ export class DbService {
                 photoUrlsAbove: [ '/assets/images/questions/carski orel.jpg' ],
                 question: 'Каква е главната причина за намаляването на бройките Царски орли?',
                 answer: {
-                    type: 'multiple-choise',
                     choises: [
                         'Бракониери',
                         'Замърсяване',
@@ -353,7 +350,6 @@ export class DbService {
                 photoUrlsAbove: [ '/assets/images/questions/carski orel.jpg' ],
                 question: 'Каква е главната причина за намаляването на бройките Царски орли?',
                 answer: {
-                    type: 'multiple-choise',
                     choises: [
                         'Бракониери',
                         'Замърсяване',
@@ -371,7 +367,6 @@ export class DbService {
                 photoUrlsAbove: [ '/assets/images/questions/zlatna zhaba.png' ],
                 question: 'Каква е причината за изчезването на Златната жаба?',
                 answer: {
-                    type: 'multiple-choise',
                     choises: [
                         'Глобално затопляне',
                         'Замърсяване на реките',
@@ -389,7 +384,6 @@ export class DbService {
                 photoUrlsAbove: [ '/assets/images/questions/shtigga.png' ],
                 question: 'Каква е причината за намаляването на бройките на Черният щъркел?',
                 answer: {
-                    type: 'multiple-choise',
                     choises: [
                         'Замърсяването на блатата и езерата',
                         'Недостиг на храна',
@@ -400,7 +394,40 @@ export class DbService {
                 }
             }
         },
+        {
+            id: '5',
+            el: {
+                category: 'animals',
+                photoUrlsAbove: [ '/assets/images/questions/tulen.jpg' ],
+                question: 'Вярно или грешно. От 1996г. тюлените в Черно море намаляват, като днес те са почти изчезнали у нас.',
+                answer: {
+                    choises: [
+                        'Вярно',
+                        'Грешно',
+                    ],
+                    correctChoise: 'Грешно',
+                }
+            }
+        },
+        {
+            id: '6',
+            el: {
+                category: 'animals',
+                photoUrlsAbove: [ '/assets/images/questions/ris.jpg' ],
+                question: 'Каква е причината за намаляването на бройките рисове в България?',
+                answer: {
+                    choises: [
+                        'Глобално затопляне',
+                        'Незаконно избиване за козината им',
+                        'Разрушаването на местообитанията им',
+                        'Убиван е от естествени врагове',
+                    ],
+                    correctChoise: 'Незаконно избиване за козината им',
+                }
+            }
+        },
     ];
+    private mock_question_categories: string[] = [ 'animals' ];
 
     private getRandomEls<T>(array: T[], n: number): T[] {
         const result: T[] = new Array(n);
@@ -440,6 +467,9 @@ export class DbService {
         return this.getRandomEls(this.mock_questions
             .filter(v => v.el.category === category)
             .map(v => v.el), n);
+    }
+    getRandomCategory(): string {
+        return this.getRandomEls(this.mock_question_categories, 1)[0];
     }
 
     constructor() { }
