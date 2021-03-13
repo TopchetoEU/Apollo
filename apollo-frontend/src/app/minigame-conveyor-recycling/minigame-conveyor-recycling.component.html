@@ -1,12 +1,43 @@
 <div class="container">
-    <div class="conveyor" #conveyor>
-        <img src="/assets/images/conveyor-belt/conveyor-{{conveyorFrame + 1}}.png" class="image">
-        <img src="/assets/images/conveyor-belt/conveyor-end-{{conveyorFrame + 1}}.png" class="image">
+    <igx-linear-bar [max]="timeMax" [value]="time" class="timeline" [text]="getTimerText()"></igx-linear-bar>
+    <div class="points">Точки: {{points}}</div>
+    <div class="conveyor">
+        <img src="/assets/images/conveyor-belt/conveyor.gif">
+        <img src="/assets/images/conveyor-belt/conveyor.gif">
+        <img src="/assets/images/conveyor-belt/conveyor.gif">
+        <img src="/assets/images/conveyor-belt/conveyor.gif">
+        <img src="/assets/images/conveyor-belt/conveyor-end.gif">
+        <div class="conveyor-hitbox" #conveyor></div>
     </div>
-    <div class="bins" [style.left]="(146 * (trashOffset + 1) - 50) + 'px'" #bins>
-        <img src="/assets/images/conveyor-belt/bin-plastic.png" class="image" #bin>
-        <img src="/assets/images/conveyor-belt/bin-other.png" class="image" #bin>
+    <div class="bins" [style.left]="(binWidth * (trashOffset) + 300) + 'px'" #bins>
         <img src="/assets/images/conveyor-belt/bin-paper.png" class="image" #bin>
         <img src="/assets/images/conveyor-belt/bin-glass.png" class="image" #bin>
+        <img src="/assets/images/conveyor-belt/bin-plastic.png" class="image" #bin>
+        <img src="/assets/images/conveyor-belt/bin-other.png" class="image" #bin>
     </div>
 </div>
+<igx-dialog #startDialog [isOpen]="true" class="dialog" [closeOnEscape]="false">
+    <div class="dialog-local" style="">
+        <h4>ConveyorBin</h4>
+        <p>
+            В тази миниигра, вие трябва да сортирате боклуците по съответните кофи:
+            хартия - синя, стъкло - зелена, пластмаса и метал - жълта и битови отпадъци - червена.
+            За всеки боклук, чиято кофа уцелите печелите точка, а за всеки боклук, чиято кофа не уцелите - губите точка.
+            Имате около една минута да сортирате всички боклуци, но ако точките ви паднат под -10, губите.
+        </p>
+        <button igxButton igxRipple routerLink="">Върни се в началния екран</button>
+        <button igxButton igxRipple (click)="start(); startDialog.close()">Играй</button>
+    </div>
+</igx-dialog>
+<igx-dialog #endDialog>
+    <div class="dialog">
+        <h4>Завършихте минииграта</h4>
+        <h6>Събрани точки: {{points}}</h6>
+        <div class="wonCard" style="display: flex; flex-direction: column; align-items: center;" *ngIf="wonCard">
+            <h4>Вие спечелихте тази карта:</h4>
+            <app-card [card]="wonCard" [mini]="true" style="margin: auto; display: block;"></app-card>
+        </div>
+        <button igxButton igxRipple routerLink="">Върни се в началния екран</button>
+        <button igxButton igxRipple (click)="restart()">Играй отново</button>
+    </div>
+</igx-dialog>

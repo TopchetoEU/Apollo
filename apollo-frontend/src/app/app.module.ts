@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 
 import {
   IgxButtonModule,
+  IgxDialogComponent,
+  IgxDialogModule,
   IgxIconModule,
   IgxProgressBarModule,
   IgxRadioModule,
@@ -43,6 +45,7 @@ import { FormsModule } from '@angular/forms';
     IgxIconModule,
     IgxRadioModule,
     IgxProgressBarModule,
+    IgxDialogModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

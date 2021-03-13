@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { Saved } from '../db.service';
+import { Card, Saved } from '../db.service';
 
 class Rect {
     public top: number;
@@ -115,8 +115,8 @@ class Trash {
         this.rect.right += offsetX;
         this.rect.bottom += offsetY;
 
-        this.element.style.top = y + 'px';
-        this.element.style.left = x + 'px';
+        this.element.style.top = Math.floor(y / 2) * 2 + 'px';
+        this.element.style.left = Math.floor(x / 2) * 2 + 'px';
 
         return { x, y, bin };
     }
@@ -127,37 +127,74 @@ class Trash {
     templateUrl: './minigame-conveyor-recycling.component.html',
     styleUrls: ['./minigame-conveyor-recycling.component.scss']
 })
-export class MinigameConveyorRecyclingComponent implements AfterViewInit {
+export class MinigameConveyorRecyclingComponent implements AfterViewInit, OnInit {
     conveyorFrame = 1;
     frameCounterID: number;
-    trashTrowerID: number;
-    trashSpeed = 1000;
-    trashTypes: string[] = ['plastic', 'metal', 'glass', 'paper', 'other'];
+    mainLoopID: number;
+    timeCounterID: number;
+    trashTypes: string[] = ['metal-plastic', 'glass', 'paper', 'other'];
     nextId = 0;
+
+    ended = false;
+
+    wonCard: Card;
+
+    throwOutSounds: HTMLAudioElement[] = [];
+    backgroundMusic: HTMLAudioElement;
+
+    trashSpeed = 1000;
     simulationSpeed = 10;
+    friction = 5;
+    gravitation = 9;
+
+    suspended = true;
 
     trashOffset = 0;
 
-    @ViewChildren('conveyor') conveyorElement;
-    @ViewChildren('bin') binElements;
-
     bins: Bin[];
-
     conveyor: Conveyor;
-
     trashes: Saved<Trash>[] = [];
-
-    binWidth = 146;
-
+    binWidth = 110;
     milliseconds = 0;
 
-    keydownListener = (e) => {
-        const code = e.keyCode as number;
-        if (code === 65) this.trashOffset--;
-        if (code === 68) this.trashOffset++;
+    won = false;
 
-        if (this.trashOffset < 0) this.trashOffset = this.bins.length - 1;
-        if (this.trashOffset >= this.bins.length) this.trashOffset = 0;
+    timeMax = 1;
+    time = 0;
+
+    points = 0;
+
+    binsAcceptedTypes: string[][] = [
+        [ 'paper' ],
+        [ 'glass' ],
+        [ 'metal-plastic' ],
+        [ 'other' ],
+    ];
+
+    @ViewChildren('conveyor') conveyorElement;
+    @ViewChildren('bin') binElements;
+    @ViewChild('endDialog') endDialog;
+
+    initSound(url: string): HTMLAudioElement {
+        const el = document.createElement('audio');
+        el.src = url;
+
+        return el;
+    }
+    clearSound(sound: HTMLAudioElement): void {
+        document.body.append(sound);
+        sound.remove();
+    }
+
+    keydownListener = (e) => {
+        if (!this.suspended) {
+            const code = e.keyCode as number;
+            if (code === 65) this.trashOffset--;
+            if (code === 68) this.trashOffset++;
+
+            if (this.trashOffset < 0) this.trashOffset = 0;
+            if (this.trashOffset >= this.bins.length) this.trashOffset = this.bins.length - 1;
+        }
     }
 
     constructor(
@@ -165,6 +202,116 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit {
         private router: Router,
         private element: ElementRef,
     ) { }
+
+    showPoint(points: number, x: number, y: number): void {
+        const el = document.createElement('span');
+        el.style.fontWeight = '600';
+        el.style.fontSize = '1.5em';
+        el.style.position = 'fixed';
+        el.style.top = y + 'px';
+        el.style.left = x + 'px';
+        if (points < 0) el.style.color = 'red';
+        if (points > 0) el.style.color = 'green';
+
+        if (points > 0) el.innerText = '+';
+        el.innerText += points.toString();
+
+        this.element.nativeElement.append(el);
+
+        el.animate([
+            {
+                transform: 'translateY(0)',
+                opacity: 1,
+            },
+            {
+                transform: 'translateY(-100px)',
+                opacity: 0
+            }
+        ], {
+            duration: 500,
+        }).onfinish = () => {
+            el.remove();
+        };
+    }
+
+    getTimerText(): string {
+        const time = this.timeMax - this.time;
+        const minutes = Math.floor(time / 60).toString();
+        let seconds = Math.floor(time % 60).toString();
+
+        if (seconds.length === 1) seconds = "0" + seconds;
+
+        return `Остават: ${minutes}:${seconds}`;
+    }
+
+    spawnTrash(): void {
+        const trash = new Trash();
+        const element = document.createElement('img');
+        element.style.position = 'absolute';
+        element.style.pointerEvents = 'none';
+        element.style.userSelect = 'none';
+
+        trash.velX = 0;
+        trash.velY = 0;
+
+        trash.type = this.getRandomType();
+        trash.imageUrl = `/assets/images/conveyor-belt/${trash.type}-${Math.floor(Math.random() * 3) + 1}.png`;
+
+        element.src = trash.imageUrl;
+
+        element.decode().then(() => {
+            trash.element = element;
+
+            this.element.nativeElement.append(element);
+            trash.rect = new Rect(0, 0, element.width, element.height);
+
+            this.trashes.push({ id: (this.nextId++).toString(), el: trash });
+        });
+    }
+    updateTrash(trash: Saved<Trash>, i: number): void {
+        const newPos = trash.el.update(
+            this.gravitation / (1000 / this.simulationSpeed),
+            this.friction / (1000 / this.simulationSpeed),
+            this.conveyor, ...this.bins
+        );
+        if (newPos.y > document.body.getBoundingClientRect().bottom) {
+            trash.el.element.remove();
+            this.trashes.splice(i, 1);
+        }
+
+        if (newPos.bin) {
+            trash.el.element.remove();
+            this.trashes.splice(i, 1);
+
+            this.throwOutSounds[Math.floor(Math.random() * 3)].play();
+
+            const pointX = (trash.el.rect.left + trash.el.rect.right) / 2;
+            const pointY = trash.el.rect.bottom;
+
+            if (newPos.bin.acceptedTypes.includes(trash.el.type)) {
+                this.points++;
+                this.showPoint(1, pointX, pointY);
+            }
+            else {
+                this.points--;
+                this.showPoint(-1, pointX, pointY);
+            }
+        }
+    }
+    ngOnInit(): void {
+        this.throwOutSounds = [
+            this.initSound('/assets/sound/conveyor-bin/throw-out-1.mp3'),
+            this.initSound('/assets/sound/conveyor-bin/throw-out-2.mp3'),
+            this.initSound('/assets/sound/conveyor-bin/throw-out-3.mp3'),
+        ];
+
+        this.backgroundMusic = document.createElement('audio');
+        this.backgroundMusic.src = '/assets/sound/music/conveyorbin.wav';
+
+        this.backgroundMusic.onloadedmetadata = () => {
+            // this.timeMax = this.backgroundMusic.duration;
+        };
+    }
 
     ngAfterViewInit(): void {
         this.router.events.pipe(
@@ -174,22 +321,19 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit {
             this.end();
         });
 
-        this.start();
+        this.init();
     }
 
-    end(): void {
-        clearInterval(this.frameCounterID);
-        document.body.removeEventListener('keydown', this.keydownListener);
-    }
+    init(): void {
+        this.backgroundMusic.loop = true;
 
-    start(): void {
         document.body.addEventListener('keydown', this.keydownListener);
 
-        this.bins = this.binElements._results.map((v: ElementRef) => {
+        this.bins = this.binElements._results.map((v: ElementRef, i: number) => {
             const el = v.nativeElement;
             const bin = new Bin();
             bin.element = el;
-            bin.acceptedTypes = ['paper'];
+            bin.acceptedTypes = this.binsAcceptedTypes[i];
 
             return bin;
         });
@@ -198,55 +342,63 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit {
         this.conveyor.element = this.conveyorElement.first.nativeElement;
         this.conveyor.speed = 2;
         this.frameCounterID = setInterval(() => {
-            this.zone.run(() => {
-                this.conveyorFrame = (++this.conveyorFrame % 3);
-            });
-        }, 1000) as any as number;
-        this.frameCounterID = setInterval(() => {
-            if (this.milliseconds % (1000 / (this.simulationSpeed)) === 0) {
-                const trash = new Trash();
-                const element = document.createElement('img');
-                element.style.position = 'absolute';
-
-                trash.velX = 0;
-                trash.velY = 0;
-
-                trash.type = this.getRandomType();
-                trash.imageUrl = `/assets/images/conveyor-belt/${trash.type}-${Math.floor(Math.random() * 3) + 1}.png`;
-
-                element.src = trash.imageUrl;
-
-                element.decode().then(() => {
-                    trash.element = element;
-
-                    this.element.nativeElement.prepend(element);
-                    trash.rect = new Rect(0, 0, element.width, element.height);
-
-                    this.trashes.push({ id: (this.nextId++).toString(), el: trash });
+            if (!this.suspended) {
+                this.zone.run(() => {
+                    this.conveyorFrame = (++this.conveyorFrame % 3);
                 });
             }
-
-            this.trashes.forEach((trash, i) => {
-                const newPos = trash.el.update(
-                    9 / (1000 / this.simulationSpeed),
-                    10 / (1000 / this.simulationSpeed),
-                    this.conveyor, ...this.bins
-                );
-                if (newPos.y > document.body.getBoundingClientRect().bottom) {
-                    trash.el.element.remove();
-                    this.trashes.splice(i, 1);
+        }, 1000) as any as number;
+        this.mainLoopID = setInterval(() => {
+            if (!this.suspended) {
+                if (this.milliseconds % (this.simulationSpeed * 100) === 0) {
+                    this.spawnTrash();
                 }
 
-                if (newPos.bin) {
-                    trash.el.element.remove();
-                    this.trashes.splice(i, 1);
-                }
-            });
+                this.trashes.forEach((trash, i) => {
+                    this.updateTrash(trash, i);
+                });
 
-            this.milliseconds++;
+                this.milliseconds += this.simulationSpeed;
+            }
         }, this.simulationSpeed) as any as number;
+        this.timeCounterID = setInterval(() => {
+            if (!this.suspended) {
+                this.time += 0.25;
+                if (this.time > this.timeMax) {
+                    this.stop();
+                    this.ended = true;
+                }
+            }
+        }, 250) as any as number;
+    }
+    end(): void {
+        this.stop();
+        this.ended = true;
+    }
+    finalise(): void {
+        clearInterval(this.frameCounterID);
+        clearInterval(this.timeCounterID);
+        clearInterval(this.mainLoopID);
+        document.body.removeEventListener('keydown', this.keydownListener);
+        this.throwOutSounds.forEach(v => this.clearSound(v));
+        this.clearSound(this.backgroundMusic);
+    }
+    stop(): void {
+        this.suspended = true;
+        this.backgroundMusic.pause();
+        this.backgroundMusic.currentTime = 0;
+    }
 
+    start(): void {
+        this.backgroundMusic.play();
+        this.suspended = false;
 
+        // tslint:disable-next-line: no-conditional-assignment
+    }
+
+    restart(): void {
+        this.points = 0;
+        this.start();
     }
 
     getRandomType(): string {
