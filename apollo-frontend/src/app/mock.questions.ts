@@ -73,7 +73,7 @@ export const mock_questions: Saved<Question>[] = [
         id: '4',
         el: {
             category: 'animals',
-            photoUrlsAbove: [ '/assets/images/questions/shtigga.png' ],
+            photoUrlsAbove: [ '/assets/images/questions/shtigga.jpg' ],
             question: 'Каква е причината за намаляването на бройките на Черният щъркел?',
             answer: {
                 choises: [
@@ -137,7 +137,7 @@ export const mock_questions: Saved<Question>[] = [
         id: '8',
         el: {
             category: 'animals',
-            photoUrlsAbove: [ '/assets/images/questions/kozirog.png' ],
+            photoUrlsAbove: [ '/assets/images/questions/kozirog.jpg' ],
             question: 'Вярно или невярно. През 2009г. е клониран Пиринейският козирог,който е изчезнал през 2000г.',
             answer: {
                 choises: [
@@ -150,21 +150,6 @@ export const mock_questions: Saved<Question>[] = [
     },
     {
         id: '9',
-        el: {
-            category: 'animals',
-            photoUrlsAbove: [ '/assets/images/questions/kozirog.png' ],
-            question: 'Вярно или невярно. През 2009г. е клониран Пиринейският козирог,който е изчезнал през 2000г.',
-            answer: {
-                choises: [
-                    'Вярно',
-                    'Грешно',
-                ],
-                correctChoise: 'Вярно',
-            }
-        }
-    },
-    {
-        id: '10',
         el: {
             category: 'animals',
             photoUrlsAbove: [ '/assets/images/questions/ara.jpg' ],
@@ -181,7 +166,7 @@ export const mock_questions: Saved<Question>[] = [
         }
     },
     {
-        id: '11',
+        id: '10',
         el: {
             category: 'recycling',
             photoUrlsAbove: [ '/assets/images/questions/teniski.png' ],
@@ -198,7 +183,7 @@ export const mock_questions: Saved<Question>[] = [
         }
     },
     {
-        id: '12',
+        id: '11',
         el: {
             category: 'recycling',
             photoUrlsAbove: [ '/assets/images/questions/dunki.png' ],
@@ -215,7 +200,7 @@ export const mock_questions: Saved<Question>[] = [
         }
     },
     {
-        id: '13',
+        id: '12',
         el: {
             category: 'recycling',
             photoUrlsAbove: [ '/assets/images/questions/bonishte.png' ],
@@ -234,7 +219,7 @@ export const mock_questions: Saved<Question>[] = [
         }
     },
     {
-        id: '14',
+        id: '13',
         el: {
             category: 'recycling',
             photoUrlsAbove: [ '/assets/images/questions/kapeshto kranche.png' ],
@@ -253,7 +238,7 @@ export const mock_questions: Saved<Question>[] = [
         }
     },
     {
-        id: '15',
+        id: '14',
         el: {
             category: 'recycling',
             photoUrlsAbove: [ '/assets/images/questions/roklq.png' ],
@@ -271,10 +256,10 @@ export const mock_questions: Saved<Question>[] = [
         }
     },
     {
-        id: '16',
+        id: '15',
         el: {
             category: 'recycling',
-            photoUrlsAbove: [ '/assets/images/questions/roklq.png' ],
+            photoUrlsAbove: [ '/assets/images/questions/sudomiqlnq.png' ],
             question: 'Вярно или грешно. Миенето на чинии ръчно хаби почти толкова вода, колкото със съдомиялна машина.',
             answer: {
                 choises: [

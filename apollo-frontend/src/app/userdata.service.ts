@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { Card, DbService } from './db.service';
 
 export enum Medal {
-    None,
-    Bronze,
-    Silfer,
-    Gold,
+    None = 0,
+    Bronze = 1,
+    Silver = 2,
+    Gold = 3,
 }
 export interface MinigameUserdata {
     played: boolean;
@@ -30,7 +30,7 @@ export class UserdataService {
             localStorage['minigame-' + id] = JSON.stringify(a);
             return a;
         }
-        return localStorage['minigame-' + id] as MinigameUserdata | undefined;
+        return JSON.parse(localStorage['minigame-' + id]);
     }
     getAllMinigameUserdata(): MinigameUserdata[] {
         const minigames: MinigameUserdata[] = [];
@@ -62,7 +62,7 @@ export class UserdataService {
     saveMinigameUserdata(id: string, userdata: MinigameUserdata): void {
         const saved = {...userdata, cardId: id};
 
-        localStorage['minigame-' + id] = saved;
+        localStorage['minigame-' + id] = JSON.stringify(saved);
     }
     addCard(id: string): void {
         let saved = this.getOwnedCardIds();

@@ -36,7 +36,7 @@ export class MinigameCardComponent implements OnInit {
         switch (this.minigameUserdata.medal) {
             case Medal.None: return 'никакъв';
             case Medal.Bronze: return 'бронзов';
-            case Medal.Silfer: return 'сребърен';
+            case Medal.Silver: return 'сребърен';
             case Medal.Gold: return 'златен';
         }
     }

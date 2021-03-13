@@ -24,5 +24,4 @@ export class AppComponent implements OnInit {
     prepareRoute(outlet: RouterOutlet): void {
         return outlet && outlet.activatedRouteData && outlet.activatedRouteData.animation;
     }
-
 }

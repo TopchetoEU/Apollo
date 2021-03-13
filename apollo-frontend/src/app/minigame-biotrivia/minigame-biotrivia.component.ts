@@ -2,7 +2,7 @@ import { Component, ElementRef, NgZone, OnInit, ViewChild, ViewChildren } from '
 import { IgxRadioComponent, IgxRadioGroupDirective } from 'igniteui-angular';
 import { Observable, Subject } from 'rxjs';
 import { Answer, Card, DbService, Question, Saved } from '../db.service';
-import { UserdataService } from '../userdata.service';
+import { Medal, UserdataService } from '../userdata.service';
 
 
 @Component({
@@ -20,6 +20,7 @@ export class MinigameBiotriviaComponent implements OnInit {
     questions: Question[];
 
     displayError = false;
+    player: HTMLAudioElement;
 
     guessedQuestions = 0;
     currQuestionN = 0;
@@ -45,6 +46,8 @@ export class MinigameBiotriviaComponent implements OnInit {
 
     endGame(): void {
         this.stage = 'ongoing-ended';
+        this.player.pause();
+        this.player.remove();
 
         const successRate = (this.guessedQuestions) / this.questions.length;
 
@@ -60,6 +63,20 @@ export class MinigameBiotriviaComponent implements OnInit {
             this.userdata.addCard(newCard);
             this.wonCard = this.db.getCard(newCard);
         }
+
+        const id = this.db.getAllMinigames().filter(v => v.el.name === 'BioTrivia')[0].id;
+        const data = this.userdata.getMinigameUserdata(id);
+
+        let medal = Medal.None;
+
+        if (successRate > .5) medal = Medal.Bronze;
+        if (successRate > .75) medal = Medal.Silver;
+        if (successRate > .9) medal = Medal.Gold;
+
+        if (data.medal < medal) data.medal = medal;
+        data.played = true;
+
+        this.userdata.saveMinigameUserdata(id, data);
 
         setTimeout(() => {
             this.endingElementRef.first.nativeElement.style.opacity = 0;
@@ -145,11 +162,17 @@ export class MinigameBiotriviaComponent implements OnInit {
     startGame(): void {
         if (this.stage !== 'starting') return;
 
+        this.player = document.createElement('audio');
+
+        this.player.src = '/assets/sound/music/biotrivia.wav';
+        this.player.loop = true;
+        this.player.play();
+
         const startingEl = this.startingElementRef.first.nativeElement as HTMLElement;
         startingEl.style.position = 'absolute';
 
         this.stage = 'starting-ongoing';
-        this.questions = this.db.getRandomQuestions(1);
+        this.questions = this.db.getRandomQuestions(5);
         this.loadNextQuestion();
 
         setTimeout(() => {
@@ -197,7 +220,7 @@ export class MinigameBiotriviaComponent implements OnInit {
 
         this.stage = 'ongoing-ended';
 
-        this.questions = this.db.getRandomQuestions(1);
+        this.questions = this.db.getRandomQuestions(5);
 
         this.displayError = false;
 

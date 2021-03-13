@@ -10,7 +10,7 @@ export const mock_minigames: Saved<Minigame>[] = [
         }
     },
     {
-        id: '0',
+        id: '1',
         el: {
             name: 'BioTrivia',
             url: '/minigames/biotrivia',

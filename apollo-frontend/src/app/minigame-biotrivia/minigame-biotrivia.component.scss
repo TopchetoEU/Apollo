@@ -63,4 +63,17 @@
         height: 1em;
         display: inline-block;
     }
+
+    .photos {
+        display: flex;
+        justify-content: center;
+        gap: .5em;
+        margin: 1em 0;
+        .photo {
+            flex: 0 0 150px;
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+        }
+    }
 }

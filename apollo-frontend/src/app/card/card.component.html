@@ -1,4 +1,4 @@
-<div class="container dialog" #container>
+<div [class]="{ container: true, dialog: true, mini: mini }" #container>
     <div class="tags">
         <div class="contents" *ngFor="let type of card.types" >
             <div [class]="[type, 'icon']" *ngIf="type !== 'normal'"></div>

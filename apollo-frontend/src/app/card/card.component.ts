@@ -28,8 +28,9 @@ export class CardComponent implements OnInit {
             },
         ],
     };
+    @Input() mini = false;
 
-    flipped: boolean = false;
+    flipped = false;
 
     constructor(
         private icons: IgxIconService,

@@ -9,14 +9,21 @@
         <div class="separator"></div>
         <button igxButton igxRipple routerLink="">Върни се в началния екран</button>
     </div>
-    <div class="question dialog" *ngIf="stage === 'ongoing' || stage === 'starting-ongoing' || stage === 'ongoing-ended'" #ongoingDialog
+    <div class="question dialog"
+        *ngIf="stage === 'ongoing' || stage === 'starting-ongoing' || stage === 'ongoing-ended'" #ongoingDialog
         style="opacity: 0;">
         <igx-linear-bar [max]="questions.length" [value]="currQuestionN - 1" class="progress"></igx-linear-bar>
-        <div class="container2">
+        <div class="container2" *ngIf="currQuestion.photoUrlsAbove.length > 0">
+            <div class="photos">
+                <div *ngFor="let photo of currQuestion.photoUrlsAbove"
+                    class="photo" [style.background-image]="'url(\'' + photo + '\')'">
+                </div>
+            </div>
+
             <h6>{{currQuestion.question}}</h6>
 
             <div style="color: red;" *ngIf="displayError">Нужен е отговор, за да продължите</div>
-            
+
 
             <igx-radio *ngFor="let choise of currAnswers" name="choise" value="{{choise}}"
                 [checked]="selectedAnswer === choise" (change)="selectedAnswer = choise" [required]="true">{{choise}}
@@ -25,24 +32,28 @@
         </div>
     </div>
     <div class="dialog" style="opacity: 0;" *ngIf="stage === 'ended' || stage === 'ongoing-ended'" #endDialog>
-            <h4>Завършихте викторината</h4>
-            Верни отговори:
-            <igx-linear-bar [max]="questions.length" [value]="guessedQuestions"></igx-linear-bar>
-            <div *ngIf="guessedQuestions < questions.length">
-                <h6>Грешни отговори:</h6>
-                <div class="wrongAnswers">
-                    <div *ngFor="let answer of getIncorrectAnswers()">
-                        <b>{{answer.index}}. {{answer.question.question}}</b><br>
-                        <div><div class="identation"></div> Вашият отговор: {{answer.answer}}</div>
-                        <div><div class="identation"></div> Правилен отговор: {{answer.question.answer.correctChoise}}</div>
+        <h4>Завършихте викторината</h4>
+        Верни отговори:
+        <igx-linear-bar [max]="questions.length" [value]="guessedQuestions"></igx-linear-bar>
+        <div *ngIf="guessedQuestions < questions.length">
+            <h6>Грешни отговори:</h6>
+            <div class="wrongAnswers">
+                <div *ngFor="let answer of getIncorrectAnswers()">
+                    <b>{{answer.index}}. {{answer.question.question}}</b><br>
+                    <div>
+                        <div class="identation"></div> Вашият отговор: {{answer.answer}}
+                    </div>
+                    <div>
+                        <div class="identation"></div> Правилен отговор: {{answer.question.answer.correctChoise}}
                     </div>
                 </div>
             </div>
-            <div class="wonCard" style="display: flex; flex-direction: column; align-items: center;" *ngIf="wonCard">
-                <h4>You've won this card:</h4>
-                <app-card [card]="wonCard" style="margin: auto; display: block;"></app-card>
-            </div>
-            <button igxButton igxRipple routerLink="">Върни се в началния екран</button>
-            <button igxButton igxRipple (click)="restartGame()">Играй отново</button>
+        </div>
+        <div class="wonCard" style="display: flex; flex-direction: column; align-items: center;" *ngIf="wonCard">
+            <h4>Вие спечелихте тази карта:</h4>
+            <app-card [card]="wonCard" [mini]="true" style="margin: auto; display: block;"></app-card>
+        </div>
+        <button igxButton igxRipple routerLink="">Върни се в началния екран</button>
+        <button igxButton igxRipple (click)="restartGame()">Играй отново</button>
     </div>
 </div>
