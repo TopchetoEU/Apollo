@@ -1,6 +1,8 @@
 import { Component, ElementRef, NgZone, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { NavigationEnd, NavigationStart, Router, RouterEvent } from '@angular/router';
 import { IgxRadioComponent, IgxRadioGroupDirective } from 'igniteui-angular';
 import { Observable, Subject } from 'rxjs';
+import { filter, map, tap } from 'rxjs/operators';
 import { Answer, Card, DbService, Question, Saved } from '../db.service';
 import { Medal, UserdataService } from '../userdata.service';
 
@@ -39,9 +41,18 @@ export class MinigameBiotriviaComponent implements OnInit {
     constructor(
         private db: DbService,
         private userdata: UserdataService,
+        private router: Router,
     ) { }
 
     ngOnInit(): void {
+        this.router.events.pipe(
+            filter((e: any) => e instanceof NavigationStart),
+            // tslint:disable-next-line: deprecation
+        ).subscribe((e: NavigationStart) => {
+            console.log(e);
+            this.player.pause();
+            this.player.remove();
+        });
     }
 
     endGame(): void {
@@ -64,7 +75,7 @@ export class MinigameBiotriviaComponent implements OnInit {
             this.wonCard = this.db.getCard(newCard);
         }
 
-        const id = this.db.getAllMinigames().filter(v => v.el.name === 'BioTrivia')[0].id;
+        const id = '1';
         const data = this.userdata.getMinigameUserdata(id);
 
         let medal = Medal.None;
@@ -83,7 +94,7 @@ export class MinigameBiotriviaComponent implements OnInit {
             this.animateElements(
                 this.ongoingElementRef.first.nativeElement,
                 this.endingElementRef.first.nativeElement
-            // tslint:disable-next-line: deprecation
+                // tslint:disable-next-line: deprecation
             ).subscribe(() => {
                 this.stage = 'ended';
             });
@@ -240,6 +251,11 @@ export class MinigameBiotriviaComponent implements OnInit {
             // tslint:disable-next-line: deprecation
             this.animateElements(endingEl, ongoingEl).subscribe(() => {
                 this.stage = 'ongoing';
+                this.player = document.createElement('audio');
+
+                this.player.src = '/assets/sound/music/biotrivia.wav';
+                this.player.loop = true;
+                this.player.play();
             });
         }, 20);
     }

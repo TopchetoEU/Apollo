@@ -4,9 +4,8 @@ export const mock_minigames: Saved<Minigame>[] = [
     {
         id: '0',
         el: {
-            name: 'Рециклиране',
+            name: 'ConveyorBin',
             url: '/minigames/conveyor-belt',
-            comingSoon: true,
         }
     },
     {

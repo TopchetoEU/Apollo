@@ -2,7 +2,7 @@ import { Question, Saved } from "./db.service";
 
 export const mock_questions: Saved<Question>[] = [
     {
-        id: '0',
+        id: '1',
         el: {
             category: 'animals',
             photoUrlsAbove: [ '/assets/images/questions/slon.jpg' ],
@@ -15,23 +15,6 @@ export const mock_questions: Saved<Question>[] = [
                     'Замърсяване на въздуха'
                 ],
                 correctChoise: 'Убивани са от бракониери',
-            }
-        }
-    },
-    {
-        id: '1',
-        el: {
-            category: 'animals',
-            photoUrlsAbove: [ '/assets/images/questions/carski orel.jpg' ],
-            question: 'Каква е главната причина за намаляването на бройките Царски орли?',
-            answer: {
-                choises: [
-                    'Бракониери',
-                    'Замърсяване',
-                    'Отсичане на горите',
-                    'Електрически стълбове'
-                ],
-                correctChoise: 'Електрически стълбове',
             }
         }
     },
