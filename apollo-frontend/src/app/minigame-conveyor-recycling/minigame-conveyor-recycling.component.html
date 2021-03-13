@@ -3,7 +3,7 @@
         <img src="/assets/images/conveyor-belt/conveyor-{{conveyorFrame + 1}}.png" class="image">
         <img src="/assets/images/conveyor-belt/conveyor-end-{{conveyorFrame + 1}}.png" class="image">
     </div>
-    <div class="bins" [style.left]="(146 - 50) + 'px'" #bins>
+    <div class="bins" [style.left]="(146 * (trashOffset + 1) - 50) + 'px'" #bins>
         <img src="/assets/images/conveyor-belt/bin-plastic.png" class="image" #bin>
         <img src="/assets/images/conveyor-belt/bin-other.png" class="image" #bin>
         <img src="/assets/images/conveyor-belt/bin-paper.png" class="image" #bin>

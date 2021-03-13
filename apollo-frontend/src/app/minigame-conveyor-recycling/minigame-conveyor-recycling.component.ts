@@ -13,10 +13,10 @@ class Rect {
         return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
     }
     private checkRectInRect(a: Rect, b: Rect): boolean {
-        return this.checkPointInRect(a.left,  a.top,    b) ||
-               this.checkPointInRect(a.right, a.top,    b) ||
-               this.checkPointInRect(a.left,  a.bottom, b) ||
-               this.checkPointInRect(a.right, a.bottom, b);
+        return this.checkPointInRect(a.left, a.top, b) ||
+            this.checkPointInRect(a.right, a.top, b) ||
+            this.checkPointInRect(a.left, a.bottom, b) ||
+            this.checkPointInRect(a.right, a.bottom, b);
     }
 
     public collidesWith(rect: Rect): boolean {
@@ -45,21 +45,21 @@ class Conveyor {
     public speed: number;
 
 
-    public checkCollision(el: HTMLElement): boolean {
+    public checkCollision(rect: Rect): boolean {
         const a = new Rect(this.element.getBoundingClientRect());
-        const b = new Rect(el.getBoundingClientRect());
+        const b = rect;
 
         return a.collidesWith(b);
     }
-    public getUpVelocity(el: HTMLElement): number {
-        return  this.element.getBoundingClientRect().top - el.getBoundingClientRect().bottom;
+    public getUpVelocity(rect: Rect): number {
+        return this.element.getBoundingClientRect().top - rect.bottom;
     }
 }
 class Bin {
     public acceptedTypes: string[];
     public element: HTMLElement;
     public checkTrashColission(trash: Trash): boolean {
-        return new Rect(trash.element.getBoundingClientRect()).collidesWith(new Rect(this.element.getBoundingClientRect()));
+        return trash.rect.collidesWith(new Rect(this.element.getBoundingClientRect()));
     }
     public correctTrash(trash: Trash): boolean {
         return this.acceptedTypes.includes(trash.type);
@@ -77,34 +77,48 @@ class Trash {
     public thrownOut = new EventEmitter<boolean>();
     public dropped = new EventEmitter();
 
+    public rect: Rect;
+
     public update(gravity: number, friction: number, conveyor: Conveyor, ...bins: Bin[]): { x: number, y: number, bin?: Bin } {
         let x;
         let y;
 
-        const rect = this.element.getBoundingClientRect();
-        x = rect.left;
-        y = rect.top;
+        x = this.rect.left;
+        y = this.rect.top;
 
         this.velY += gravity;
         y += this.velY;
 
-        if (conveyor.checkCollision(this.element)) {
-            const velCorrection = conveyor.getUpVelocity(this.element);
+        this.rect.top += this.velY;
+        this.rect.bottom += this.velY;
+
+        if (conveyor.checkCollision(this.rect)) {
+            const velCorrection = conveyor.getUpVelocity(this.rect);
             this.velY = 0;
             y += velCorrection;
             this.velX = conveyor.speed;
+            this.rect.top -= this.velY;
+            this.rect.bottom -= this.velY;
         }
         else if (Math.abs(this.velX) > 0) {
             this.velX = Math.sign(this.velX) * (Math.abs(this.velX) - friction);
         }
 
-        const bin = bins.find(v => new Rect(rect).collidesWith(new Rect(v.element.getBoundingClientRect())));
+        const bin = bins.find(v => v.checkTrashColission(this));
         x += this.velX;
 
-        this.element.style.left = x + 'px';
-        this.element.style.top = y + 'px';
+        const offsetX = -this.rect.left + x;
+        const offsetY = -this.rect.top + y;
 
-        return {x, y, bin};
+        this.rect.left += offsetX;
+        this.rect.top += offsetY;
+        this.rect.right += offsetX;
+        this.rect.bottom += offsetY;
+
+        this.element.style.top = y + 'px';
+        this.element.style.left = x + 'px';
+
+        return { x, y, bin };
     }
 }
 
@@ -118,8 +132,11 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit {
     frameCounterID: number;
     trashTrowerID: number;
     trashSpeed = 1000;
-    trashTypes: string[] = [ 'plastic', 'metal', 'glass', 'paper', 'other' ];
+    trashTypes: string[] = ['plastic', 'metal', 'glass', 'paper', 'other'];
     nextId = 0;
+    simulationSpeed = 10;
+
+    trashOffset = 0;
 
     @ViewChildren('conveyor') conveyorElement;
     @ViewChildren('bin') binElements;
@@ -136,8 +153,11 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit {
 
     keydownListener = (e) => {
         const code = e.keyCode as number;
-        if (code === 65) console.log('move left');
-        if (code === 68) console.log('move right');
+        if (code === 65) this.trashOffset--;
+        if (code === 68) this.trashOffset++;
+
+        if (this.trashOffset < 0) this.trashOffset = this.bins.length - 1;
+        if (this.trashOffset >= this.bins.length) this.trashOffset = 0;
     }
 
     constructor(
@@ -183,32 +203,35 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit {
             });
         }, 1000) as any as number;
         this.frameCounterID = setInterval(() => {
-            if (this.milliseconds % (1000 / 10) === 0) {
+            if (this.milliseconds % (1000 / (this.simulationSpeed)) === 0) {
                 const trash = new Trash();
                 const element = document.createElement('img');
                 element.style.position = 'absolute';
 
-                trash.dropped.subscribe(() => {
-                    trash.element.remove();
-
-                });
-
-                trash.velX = 2;
+                trash.velX = 0;
                 trash.velY = 0;
 
                 trash.type = this.getRandomType();
                 trash.imageUrl = `/assets/images/conveyor-belt/${trash.type}-${Math.floor(Math.random() * 3) + 1}.png`;
 
                 element.src = trash.imageUrl;
-                trash.element = element;
 
-                this.element.nativeElement.prepend(element);
+                element.decode().then(() => {
+                    trash.element = element;
 
-                this.trashes.push({ id: (this.nextId++).toString(), el: trash });
+                    this.element.nativeElement.prepend(element);
+                    trash.rect = new Rect(0, 0, element.width, element.height);
+
+                    this.trashes.push({ id: (this.nextId++).toString(), el: trash });
+                });
             }
 
             this.trashes.forEach((trash, i) => {
-                const newPos = trash.el.update(9 / 100, .05, this.conveyor, ...this.bins);
+                const newPos = trash.el.update(
+                    9 / (1000 / this.simulationSpeed),
+                    10 / (1000 / this.simulationSpeed),
+                    this.conveyor, ...this.bins
+                );
                 if (newPos.y > document.body.getBoundingClientRect().bottom) {
                     trash.el.element.remove();
                     this.trashes.splice(i, 1);
@@ -221,7 +244,7 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit {
             });
 
             this.milliseconds++;
-        }, 10) as any as number;
+        }, this.simulationSpeed) as any as number;
 
 
     }

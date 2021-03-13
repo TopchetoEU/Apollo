@@ -1,17 +1,24 @@
 img {
     image-rendering: crisp-edges;
 }
-.conveyor {
+.container {
     position: absolute;
     top: 30vh;
-}
-.bins {
-    position: absolute;
-    bottom: 10vh;
-    .image {
-        max-height: unset;
+    display: flex;
+    flex-direction: column;
+    gap: 3em;
+    .bins {
+        position: relative;
+        display: flex;
+        .image {
+            max-height: unset;
+        }
+        transition: left 100ms;
     }
-    transition: left 100ms;
+    .conveyor {
+        display: flex;
+        width: max-content;
+    }
 }
 
 :host {
