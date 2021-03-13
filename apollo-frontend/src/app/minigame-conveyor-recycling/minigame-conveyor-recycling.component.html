@@ -1,6 +1,9 @@
 <div class="container">
     <igx-linear-bar [max]="timeMax" [value]="time" class="timeline" [text]="getTimerText()"></igx-linear-bar>
-    <div class="points">Точки: {{points}}</div>
+    <div class="points">
+        Точки: {{points}} <br>
+        Грешки: {{mistakes}}
+    </div>
     <div class="conveyor">
         <img src="/assets/images/conveyor-belt/conveyor.gif">
         <img src="/assets/images/conveyor-belt/conveyor.gif">
@@ -17,27 +20,32 @@
     </div>
 </div>
 <igx-dialog #startDialog [isOpen]="true" class="dialog" [closeOnEscape]="false">
-    <div class="dialog-local" style="">
+    <div class="dialog-local">
         <h4>ConveyorBin</h4>
         <p>
             В тази миниигра, вие трябва да сортирате боклуците по съответните кофи:
             хартия - синя, стъкло - зелена, пластмаса и метал - жълта и битови отпадъци - червена.
+            За да преместите кофите наляво, натиснете A, а за да ги преместите надясно - D.
             За всеки боклук, чиято кофа уцелите печелите точка, а за всеки боклук, чиято кофа не уцелите - губите точка.
             Имате около една минута да сортирате всички боклуци, но ако точките ви паднат под -10, губите.
         </p>
-        <button igxButton igxRipple routerLink="">Върни се в началния екран</button>
         <button igxButton igxRipple (click)="start(); startDialog.close()">Играй</button>
+        <button igxButton igxRipple (click)="finalise()" routerLink="">Върни се в началния екран</button>
     </div>
 </igx-dialog>
-<igx-dialog #endDialog>
-    <div class="dialog">
-        <h4>Завършихте минииграта</h4>
+<igx-dialog #endDialog [isOpen]="ended">
+    <div class="dialog-local">
+        <h4>
+            <span *ngIf="won">Завършихте минииграта</span>
+            <span *ngIf="!won">Загубихте минииграта</span>
+        </h4>
         <h6>Събрани точки: {{points}}</h6>
+        <h6>Грешки: {{mistakes}}</h6>
         <div class="wonCard" style="display: flex; flex-direction: column; align-items: center;" *ngIf="wonCard">
             <h4>Вие спечелихте тази карта:</h4>
-            <app-card [card]="wonCard" [mini]="true" style="margin: auto; display: block;"></app-card>
+            <app-card [card]="wonCard" [mini]="true" style="margin: 1em auto; display: block;"></app-card>
         </div>
-        <button igxButton igxRipple routerLink="">Върни се в началния екран</button>
         <button igxButton igxRipple (click)="restart()">Играй отново</button>
+        <button igxButton igxRipple (click)="finalise()" routerLink="">Върни се в началния екран</button>
     </div>
 </igx-dialog>

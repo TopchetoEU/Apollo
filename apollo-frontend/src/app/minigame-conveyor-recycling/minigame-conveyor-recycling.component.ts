@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { Card, Saved } from '../db.service';
+import { Card, DbService, Saved } from '../db.service';
+import { Medal, UserdataService } from '../userdata.service';
 
 class Rect {
     public top: number;
@@ -129,15 +130,12 @@ class Trash {
 })
 export class MinigameConveyorRecyclingComponent implements AfterViewInit, OnInit {
     conveyorFrame = 1;
-    frameCounterID: number;
     mainLoopID: number;
     timeCounterID: number;
     trashTypes: string[] = ['metal-plastic', 'glass', 'paper', 'other'];
     nextId = 0;
 
     ended = false;
-
-    wonCard: Card;
 
     throwOutSounds: HTMLAudioElement[] = [];
     backgroundMusic: HTMLAudioElement;
@@ -158,11 +156,18 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit, OnInit
     milliseconds = 0;
 
     won = false;
+    wonCard: Card = {
+        imageUrl: '',
+        info: [],
+        name: 'test',
+        types: ['endangered'],
+    };
 
     timeMax = 1;
     time = 0;
 
     points = 0;
+    mistakes = 0;
 
     binsAcceptedTypes: string[][] = [
         [ 'paper' ],
@@ -201,6 +206,8 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit, OnInit
         private zone: NgZone,
         private router: Router,
         private element: ElementRef,
+        private db: DbService,
+        private userdata: UserdataService,
     ) { }
 
     showPoint(points: number, x: number, y: number): void {
@@ -294,7 +301,11 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit, OnInit
             }
             else {
                 this.points--;
+                this.mistakes++;
                 this.showPoint(-1, pointX, pointY);
+                if (this.mistakes > 10) {
+                    this.end();
+                }
             }
         }
     }
@@ -309,7 +320,7 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit, OnInit
         this.backgroundMusic.src = '/assets/sound/music/conveyorbin.wav';
 
         this.backgroundMusic.onloadedmetadata = () => {
-            // this.timeMax = this.backgroundMusic.duration;
+            this.timeMax = this.backgroundMusic.duration;
         };
     }
 
@@ -341,13 +352,6 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit, OnInit
         this.conveyor = new Conveyor();
         this.conveyor.element = this.conveyorElement.first.nativeElement;
         this.conveyor.speed = 2;
-        this.frameCounterID = setInterval(() => {
-            if (!this.suspended) {
-                this.zone.run(() => {
-                    this.conveyorFrame = (++this.conveyorFrame % 3);
-                });
-            }
-        }, 1000) as any as number;
         this.mainLoopID = setInterval(() => {
             if (!this.suspended) {
                 if (this.milliseconds % (this.simulationSpeed * 100) === 0) {
@@ -365,25 +369,54 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit, OnInit
             if (!this.suspended) {
                 this.time += 0.25;
                 if (this.time > this.timeMax) {
-                    this.stop();
-                    this.ended = true;
+                    this.won = true;
+                    this.end();
                 }
             }
         }, 250) as any as number;
     }
-    end(): void {
-        this.stop();
-        this.ended = true;
-    }
     finalise(): void {
-        clearInterval(this.frameCounterID);
         clearInterval(this.timeCounterID);
         clearInterval(this.mainLoopID);
         document.body.removeEventListener('keydown', this.keydownListener);
         this.throwOutSounds.forEach(v => this.clearSound(v));
         this.clearSound(this.backgroundMusic);
     }
-    stop(): void {
+    end(): void {
+        this.pause();
+
+        this.ended = true;
+
+        let medal = Medal.None;
+        if (this.won) {
+
+            const successRate = (10 - this.mistakes) / 10;
+
+            if (successRate > 0) {
+                const owned = this.userdata.getOwnedCardIds();
+
+                let newCard = null;
+
+                do {
+                    newCard = this.db.getRandomCardId(successRate - .5);
+                } while (owned.includes(newCard));
+
+                this.userdata.addCard(newCard);
+                this.wonCard = this.db.getCard(newCard);
+            }
+            if (successRate > .5) medal = Medal.Bronze;
+            if (successRate > .75) medal = Medal.Silver;
+            if (successRate > .9) medal = Medal.Gold;
+        }
+
+        const id = '0';
+        const data = this.userdata.getMinigameUserdata(id);
+        if (data.medal < medal) data.medal = medal;
+        data.played = true;
+
+        this.userdata.saveMinigameUserdata(id, data);
+    }
+    pause(): void {
         this.suspended = true;
         this.backgroundMusic.pause();
         this.backgroundMusic.currentTime = 0;
@@ -398,6 +431,13 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit, OnInit
 
     restart(): void {
         this.points = 0;
+        this.ended = false;
+        this.backgroundMusic.currentTime = 0;
+        this.time = 0;
+        this.trashes.forEach(v => v.el.element.remove());
+        this.trashes = [];
+        this.nextId = 0;
+        this.milliseconds = 0;
         this.start();
     }
 
