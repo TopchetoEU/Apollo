@@ -253,4 +253,62 @@ export const mock_questions: Saved<Question>[] = [
             }
         }
     },
+    {
+        id: '16',
+        el: {
+            category: 'plants',
+            photoUrlsAbove: [
+                '/assets/images/questions/izcheznali-1.png',
+                '/assets/images/questions/izcheznali-2.png',
+                '/assets/images/questions/izcheznali-3.png',
+            ],
+            question: 'Кое от тези растения е изчезнало в България?',
+            answer: {
+                choises: [
+                    'Еделвайс',
+                    'Източна тинтява',
+                    'Бардуче',
+                ],
+                correctChoise: 'Източна тинтява',
+            }
+        }
+    },
+    {
+        id: '17',
+        el: {
+            category: 'plants',
+            photoUrlsAbove: [
+                '/assets/images/questions/nartsisova-susunka.png',
+                '/assets/images/questions/damsko-surce.png',
+            ],
+            question: 'Кое от тези растения е защитено?',
+            answer: {
+                choises: [
+                    'Нарцисоцветна съсънка',
+                    'Дамско сърце',
+                ],
+                correctChoise: 'Нарцисоцветна съсънка',
+            }
+        }
+    },
+    {
+        id: '18',
+        el: {
+            category: 'plants',
+            photoUrlsAbove: [
+                '/assets/images/questions/grebenat-na-petela.png',
+                '/assets/images/questions/cveteto-prilep.png',
+                '/assets/images/questions/liliq-kobra.png',
+            ],
+            question: 'Кое от тези растения се среща в България?',
+            answer: {
+                choises: [
+                    'Гребенът на петела',
+                    'Цветето лилия',
+                    'Лилия кобра',
+                ],
+                correctChoise: 'Гребенът на петела',
+            }
+        }
+    },
 ];

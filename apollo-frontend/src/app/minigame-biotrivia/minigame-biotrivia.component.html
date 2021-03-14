@@ -15,9 +15,8 @@
         <igx-linear-bar [max]="questions.length" [value]="currQuestionN - 1" class="progress"></igx-linear-bar>
         <div class="container2" *ngIf="currQuestion.photoUrlsAbove.length > 0">
             <div class="photos">
-                <div *ngFor="let photo of currQuestion.photoUrlsAbove"
-                    class="photo" [style.background-image]="'url(\'' + photo + '\')'">
-                </div>
+                <img *ngFor="let photo of currQuestion.photoUrlsAbove"
+                    class="photo" [src]="photo">
             </div>
 
             <h6>{{currQuestion.question}}</h6>

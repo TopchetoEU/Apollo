@@ -41,4 +41,5 @@ $my-color-palette: igx-palette($primary: $company-color,
     background-color: #f8f8f855;
     backdrop-filter: blur(10px);
     box-shadow: #0004 3px 3px 5px;
+    z-index: -1 ;
 }

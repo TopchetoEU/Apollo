@@ -17,7 +17,7 @@ export interface Card {
     info: CardParagraph[];
     imageUrl: string;
     name: string;
-    types: Array<"endangered" | "normal">;
+    types: Array<"endangered" | "normal" | "recycle">;
 }
 export interface Answer {
     choises: string[];

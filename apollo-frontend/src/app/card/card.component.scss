@@ -44,6 +44,25 @@
                 background-image: url('/assets/icons/risk-skull.svg');
                 background-color: red;
             }
+            position: relative;
+            &.endangered:hover {
+                &::after {
+                    position: absolute;
+                    opacity: 0.99999;
+                    bottom: 0;
+                    content: 'Череп на червен фон означава, че следната карта е на застрашен вид';
+                    background-color: white;
+                    max-width: 100px;
+                    z-index: 9999999;
+                    }
+            }
+            &.recycle {
+                background-color: green;
+                fill: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
         }
     }
     .info {

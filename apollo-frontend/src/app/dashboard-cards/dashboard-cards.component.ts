@@ -11,6 +11,7 @@ export class DashboardCardsComponent implements OnInit {
 
   constructor(
     private userdata: UserdataService,
+    private db: DbService,
   ) { }
 
   ngOnInit(): void {

@@ -553,4 +553,88 @@ export const mock_card_types: Saved<Card>[] = [
             ],
         },
     },
+    {
+        id: "34",
+        el: {
+            name: "Кенчета",
+            types: ['recycle'],
+            imageUrl: "/assets/images/cards/tincan.png",
+            info: [
+                {
+                    heading: "До луната и обратно... 20 пъти",
+                    content: "Американците изхвърлят всяка година кутиики от сода или бутилки, които са достатъчни да стигнат до Луната и да се върнат около 20 пъти.",
+                },
+            ],
+        },
+    },
+    {
+        id: "35",
+        el: {
+            name: "Тоалетна хартия",
+            types: ['recycle'],
+            imageUrl: "/assets/images/cards/toilet-paper.jpg",
+            info: [
+                {
+                    heading: "Тоалетна-o-ception",
+                    content: "27,000 дървета се отсичат всеки ден за направата на тоалетна хартия.",
+                },
+            ],
+        },
+    },
+    {
+        id: "36",
+        el: {
+            name: "Хартия",
+            types: ['recycle'],
+            imageUrl: "/assets/images/cards/image_19.jpg",
+            info: [
+                {
+                    heading: "Интересно",
+                    content: "1 тон рециклирана хартия спасява около 13 дървета и 32 000 литра вода.",
+                },
+            ],
+        },
+    },
+    {
+        id: "37",
+        el: {
+            name: "Пластмаса",
+            types: ['recycle'],
+            imageUrl: "/assets/images/cards/image_20.jpg",
+            info: [
+                {
+                    heading: "Интересно",
+                    content: "На сметището пластмасата се разпада 400 години.",
+                },
+            ],
+        },
+    },
+    {
+        id: "38",
+        el: {
+            name: "Пластмаса",
+            types: ['recycle'],
+            imageUrl: "/assets/images/cards/image_21.jpg",
+            info: [
+                {
+                    heading: "Интересно",
+                    content: "Спестената енергия от рециклирането на 1 пластмасова бутилка ще захрани компютър за 25 минути.",
+                },
+            ],
+        },
+    },
+    {
+        id: "39",
+        el: {
+            name: "Стъкло",
+            types: ['recycle'],
+            imageUrl: "/assets/images/cards/image_22.jpg",
+            info: [
+                {
+                    heading: "Интересно",
+                    content: "1 рециклирана стъклена бутилка спестява електричеството, нужно на телевизора ви да работи 1.5 часа.",
+                },
+            ],
+        },
+    },
 ];

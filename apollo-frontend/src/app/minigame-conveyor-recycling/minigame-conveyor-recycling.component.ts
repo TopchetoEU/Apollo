@@ -140,7 +140,8 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit, OnInit
     throwOutSounds: HTMLAudioElement[] = [];
     backgroundMusic: HTMLAudioElement;
 
-    trashSpeed = 1000;
+    trashSpeed = 200;
+    nextTrasgSpeedDecrease = 55;
     simulationSpeed = 10;
     friction = 5;
     gravitation = 9;
@@ -156,13 +157,7 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit, OnInit
     milliseconds = 0;
 
     won = false;
-    wonCard: Card = {
-        imageUrl: '',
-        info: [],
-        name: 'test',
-        types: ['endangered'],
-    };
-
+    wonCard: Card = null;
     timeMax = 1;
     time = 0;
 
@@ -295,6 +290,10 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit, OnInit
             const pointX = (trash.el.rect.left + trash.el.rect.right) / 2;
             const pointY = trash.el.rect.bottom;
 
+            this.trashSpeed -= this.nextTrasgSpeedDecrease;
+            this.milliseconds = 0;
+            this.nextTrasgSpeedDecrease = Math.round(this.nextTrasgSpeedDecrease / 2);
+
             if (newPos.bin.acceptedTypes.includes(trash.el.type)) {
                 this.points++;
                 this.showPoint(1, pointX, pointY);
@@ -354,7 +353,7 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit, OnInit
         this.conveyor.speed = 2;
         this.mainLoopID = setInterval(() => {
             if (!this.suspended) {
-                if (this.milliseconds % (this.simulationSpeed * 100) === 0) {
+                if (this.milliseconds % (this.simulationSpeed * this.trashSpeed) === 0) {
                     this.spawnTrash();
                 }
 
@@ -431,8 +430,11 @@ export class MinigameConveyorRecyclingComponent implements AfterViewInit, OnInit
 
     restart(): void {
         this.points = 0;
+        this.mistakes = 0;
         this.ended = false;
         this.backgroundMusic.currentTime = 0;
+        this.trashSpeed = 200;
+        this.nextTrasgSpeedDecrease = 50;
         this.time = 0;
         this.trashes.forEach(v => v.el.element.remove());
         this.trashes = [];
